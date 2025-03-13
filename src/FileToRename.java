@@ -27,6 +27,6 @@ public class FileToRename {
     }
 
     public boolean rename() {
-        return file.renameTo(new File(newName));
+        return file.renameTo(new File(this.file.getParent() + "/" + newName));
     }
 }
