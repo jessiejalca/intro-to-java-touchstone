@@ -1,6 +1,5 @@
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 /*
 Rename files in a given directory.
@@ -46,9 +45,32 @@ public class Main {
             System.exit(0);
         }
 
-        // Print name of all files in directory
+        // Rename files
+        HashMap<String, Integer> extensionCount = new HashMap<>();
+        for (File file : files) {
+            // Get file extension
+            String filename = file.getName();
+            String extension = "";
+            int extIndex = filename.lastIndexOf(".");
+            if (extIndex > 0) {
+                extension = filename.substring(extIndex + 1);
+            }
+
+            // Update and get extension count
+            if (extensionCount.containsKey(extension)) {
+                extensionCount.put(extension, extensionCount.get(extension) + 1);
+            } else {
+                extensionCount.put(extension, 1);
+            }
+        }
+
+        // Print results
         for (File file : files) {
             System.out.println(file.getName());
+        }
+        System.out.println("\nNumber of files by extension:");
+        for (String extension : extensionCount.keySet()) {
+            System.out.printf("%8s:%4d\n", extension, extensionCount.get(extension));
         }
     }
 }
