@@ -7,7 +7,7 @@ Rename files in a given directory.
 public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        ArrayList<File> files = new ArrayList<>();
+        ArrayList<FileToRename> files = new ArrayList<>();
 
         // Get the contents of a directory
         System.out.print("Enter the directory path containing the files to rename: ");
@@ -35,7 +35,7 @@ public class Main {
         // Collect ONLY files
         for (File item : contents) {
             if (item.isFile()) {
-                files.add(item);
+                files.add(new FileToRename(item));
             }
         }
 
@@ -46,10 +46,11 @@ public class Main {
         }
 
         // Rename files
-        HashMap<String, Integer> extensionCount = new HashMap<>();
-        for (File file : files) {
+        System.out.println("The following files will be changed:");
+        HashMap<String, Integer> extensions = new HashMap<>();
+        for (FileToRename file : files) {
             // Get file extension
-            String filename = file.getName();
+            String filename = file.getOldName();
             String extension = "";
             int extIndex = filename.lastIndexOf(".");
             if (extIndex > 0) {
@@ -57,20 +58,24 @@ public class Main {
             }
 
             // Update and get extension count
-            if (extensionCount.containsKey(extension)) {
-                extensionCount.put(extension, extensionCount.get(extension) + 1);
+            if (extensions.containsKey(extension)) {
+                extensions.put(extension, extensions.get(extension) + 1);
             } else {
-                extensionCount.put(extension, 1);
+                extensions.put(extension, 1);
             }
+
+            // Set new names
+            String filenameFmt = directory.getName() + "_%03d.%s";
+            file.setNewName(String.format(filenameFmt, extensions.get(extension), extension));
+
+            // Print name changes
+            System.out.printf("%-14s --> %20s\n", file.getOldName(), file.getNewName());
         }
 
         // Print results
-        for (File file : files) {
-            System.out.println(file.getName());
-        }
         System.out.println("\nNumber of files by extension:");
-        for (String extension : extensionCount.keySet()) {
-            System.out.printf("%8s:%4d\n", extension, extensionCount.get(extension));
+        for (String extension : extensions.keySet()) {
+            System.out.printf("%8s:%4d\n", extension, extensions.get(extension));
         }
     }
 }
