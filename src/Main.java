@@ -2,20 +2,53 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/*
+Rename files in a given directory.
+ */
 public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         ArrayList<File> files = new ArrayList<>();
 
-        // Get the file names
-        System.out.println("List the files you want to rename separated by spaces.");
-        System.out.print("Hit enter when you're finished: ");
-        String filenamesString = input.nextLine();
-        String[] filenames = filenamesString.split(" ");
+        // Get the contents of a directory
+        System.out.print("Enter the directory path containing the files to rename: ");
+        String directoryPath = input.nextLine();
+        File directory = new File(directoryPath);
+        File[] contents = directory.listFiles();
 
-        // Convert file names to files
-        for(String filename : filenames) {
-            System.out.println(filename);
+        // Make sure directory is valid and contents were obtained properly
+        if (directory.exists() && directory.isDirectory()) {
+            // Check if there are items and if they are accessible
+            if (contents != null) {
+                if (contents.length == 0) {
+                    System.out.println("The directory is empty. No files to rename.");
+                    System.exit(0);
+                }
+            } else {
+                System.out.println("Failed to list files. Check permissions or if the path is valid.");
+                System.exit(1);
+            }
+        } else {
+            System.out.println("The specified path is not a valid directory.");
+            System.exit(1);
+        }
+
+        // Collect ONLY files
+        for (File item : contents) {
+            if (item.isFile()) {
+                files.add(item);
+            }
+        }
+
+        // Make sure at least one item is a file
+        if (files.isEmpty()) {
+            System.out.println("The directory is empty. No files to rename.");
+            System.exit(0);
+        }
+
+        // Print name of all files in directory
+        for (File file : files) {
+            System.out.println(file.getName());
         }
     }
 }
